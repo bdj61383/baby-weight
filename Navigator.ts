@@ -1,12 +1,12 @@
 import { createStackNavigator } from 'react-navigation';
-import { Home } from './Home';
+import { HomeContainer } from './Home';
 import { Loading } from './Loading';
-import { LogIn } from './LogIn';
+import { LogInContainer } from './LogIn';
 
 export const Navigator = createStackNavigator({
-  Home: { screen: Home },
+  Home: { screen: HomeContainer },
   Loading: { screen: Loading},
-  LogIn: { screen: LogIn }
+  LogIn: { screen: LogInContainer }
 },
 {
   initialRouteName: 'Loading'

@@ -2,6 +2,17 @@ import React from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { NavigationScreenProp } from 'react-navigation';
 import { auth } from './firebase';
+import { connect } from 'react-redux'
+
+const enhance = connect(
+  // Map redux state to component props
+  ({ firebase: { auth, profile } }) => ({
+    auth,
+    profile
+  })
+)
+
+
 
 interface Props {
   authSubscription: any, // TODO: Figure out this type
@@ -35,3 +46,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',    
   }
 })
+
+enhance(Loading)

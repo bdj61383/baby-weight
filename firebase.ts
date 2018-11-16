@@ -5,7 +5,7 @@ import { AppConfig } from './config';
 import 'firebase/auth';
 import 'firebase/firestore'; 
 
-firebase.initializeApp(AppConfig.firebase);
+const appInstance = firebase.initializeApp(AppConfig.firebase);
 
 const firestore = firebase.firestore();
 
@@ -14,5 +14,6 @@ firestore.settings({
 });
 
 export const auth = firebase.auth();
+export const firebaseApp = appInstance;
 export const GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
 export const db = firestore;

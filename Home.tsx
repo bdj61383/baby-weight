@@ -2,6 +2,7 @@ import { QueryDocumentSnapshot, QuerySnapshot } from '@firebase/firestore-types'
 import React from 'react';
 import { Button, NativeSyntheticEvent, NativeTouchEvent, StyleSheet, Text, TextInput, TimePickerAndroidStatic, View } from 'react-native';
 import { NavigationScreenProp } from 'react-navigation';
+import { withFirebase } from 'react-redux-firebase';
 import { db } from './firebase';
 
 interface Props {
@@ -14,7 +15,7 @@ interface State {
   due_date: any
 }
 
-export class Home extends React.Component<Props, State> {
+class Home extends React.Component<Props, State> {
   readonly state = {first_name: '', last_name: '', due_date: null};
 
   componentDidMount() {
@@ -31,7 +32,7 @@ export class Home extends React.Component<Props, State> {
   }
 
   handleButtonPress = (event: NativeSyntheticEvent<NativeTouchEvent>) =>
-    this.props.navigation.navigate('Profile')
+    this.props.firebase.logout();
 
   // handleTextSubmit = (text:string):void => this.setState({name: text});
 
@@ -39,7 +40,7 @@ export class Home extends React.Component<Props, State> {
     return (
       <View>
         <Text>Welcome to the app {this.state.first_name} {this.state.last_name}</Text>
-        <Button title="View your profile"
+        <Button title="Log Out"
           onPress={this.handleButtonPress} />
         {/* <Text>Your babby is due on {this.state.due_date}</Text> */}
       </View>
@@ -88,3 +89,5 @@ const styles = StyleSheet.create({
     width: 75,    
   }
 });
+
+export const HomeContainer = withFirebase(Home);

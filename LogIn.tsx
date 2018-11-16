@@ -1,10 +1,11 @@
 import { Google } from 'expo';
 import React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
+import { withFirebase } from 'react-redux-firebase'
 import { AppConfig } from './config';
-import { auth, GoogleAuthProvider } from './firebase';
+import { auth, firebaseApp, GoogleAuthProvider } from './firebase';
 
-export class LogIn extends React.Component {
+class LogIn extends React.Component {
   state = {
     result: null,
   };
@@ -29,17 +30,21 @@ export class LogIn extends React.Component {
       if (result.type === "success") {
         // TODO: Build credential to sign user in to firebase
         if (result.idToken) {
-          const credential = GoogleAuthProvider.credential(result.idToken);
-          auth.signInAndRetrieveDataWithCredential(credential).catch((error) => {
-            // Handle Errors here.
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            // The email of the user's account used.
-            const email = error.email;
-            // The firebase.auth.AuthCredential type that was used.
-            // const credential = error.credential;
-            // ...
-          });
+          const credential = GoogleAuthProvider.credential(result.idToken);          
+          await this.props.firebase.login({ credential })
+
+          // NOTE: THIS CODE WORKS!
+          // const response = auth.signInAndRetrieveDataWithCredential(credential).catch((error) => {
+          //   // Handle Errors here.
+          //   const errorCode = error.code;
+          //   const errorMessage = error.message;
+          //   // The email of the user's account used.
+          //   const email = error.email;
+          //   // The firebase.auth.AuthCredential type that was used.
+          //   const credential = error.credential;
+          //   // ...
+          // });
+
         } else {
           // TODO: Is this even a real edge?
         }
@@ -61,3 +66,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+export const LogInContainer = withFirebase(LogIn);
