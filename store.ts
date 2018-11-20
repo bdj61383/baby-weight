@@ -1,7 +1,7 @@
 import 'firebase/auth';
 import 'firebase/database';
 import { reactReduxFirebase } from 'react-redux-firebase';
-import { compose, createStore } from 'redux';
+import { createStore } from 'redux';
 import { reduxFirestore } from 'redux-firestore';
 import { composeWithDevTools } from 'remote-redux-devtools';
 import { firebaseApp } from './firebase';
@@ -21,11 +21,7 @@ const createStoreWithFirebase = composeWithDevTools(
   reactReduxFirebase(firebaseApp, rrfConfig)
 )(createStore)
 
-const initialState = {firebase: { authError: null }};
-
-// Create store with reducers and initial state
+// Create store with reducers.  No need for initial state at this time.
 export const store = createStoreWithFirebase(
-  rootReducer, 
-  initialState, 
-  (window as any).__REDUX_DEVTOOLS_EXTENSION__ && (window as any).__REDUX_DEVTOOLS_EXTENSION__()
-  )
+  rootReducer
+)

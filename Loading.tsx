@@ -2,32 +2,16 @@ import React from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { NavigationScreenProp } from 'react-navigation';
 import { auth } from './firebase';
-import { connect } from 'react-redux'
-
-const enhance = connect(
-  // Map redux state to component props
-  ({ firebase: { auth, profile } }) => ({
-    auth,
-    profile
-  })
-)
-
-
 
 interface Props {
-  authSubscription: any, // TODO: Figure out this type
   navigation: NavigationScreenProp<{}>
 }
 
 export class Loading extends React.PureComponent<Props, {}> {
   componentDidMount() {
     auth.onAuthStateChanged(user => {
-      this.props.navigation.navigate(user ? 'Home' : 'LogIn')
+      this.props.navigation.navigate(user ? 'App' : 'Auth')
     })
-  }
-
-  componentWillUnmount() {
-    this.props.authSubscription();
   }
 
   render() {
@@ -46,5 +30,3 @@ const styles = StyleSheet.create({
     justifyContent: 'center',    
   }
 })
-
-enhance(Loading)

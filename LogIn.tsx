@@ -1,28 +1,45 @@
 import { Google } from 'expo';
 import React from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Button, StyleSheet, Text, View } from 'react-native';
 import { withFirebase } from 'react-redux-firebase'
 import { AppConfig } from './config';
-import { auth, firebaseApp, GoogleAuthProvider } from './firebase';
+import { GoogleAuthProvider } from './firebase';
 
-class LogIn extends React.Component {
+// TODO: figure out the real typing for the firebase prop.
+interface Props {
+  firebase: {
+    login: (options: object) => void
+  }
+}
+
+interface State {
+  requesting: boolean
+}
+
+class LogIn extends React.Component<Props, State> {
   state = {
-    result: null,
+    requesting: false
   };
 
   render() {
     return (
       <View style={styles.container}>
+      { this.state.requesting ?
+        <React.Fragment>
+          <Text>Loading</Text>
+          <ActivityIndicator size="large" />
+        </React.Fragment>
+      :
         <Button title="Open Google Auth" onPress={this.handleAuth} />
-        {this.state.result ? (
-          <Text>{JSON.stringify(this.state.result)}</Text>
-        ) : null}
-        </View>
+      }
+        
+      </View>
     );
   }
 
   handleAuth = async () => {
     try {
+      this.setState({requesting: true})
       const result = await Google.logInAsync({
         iosClientId: AppConfig.oauth.google.ios,
         scopes: ["profile", "email"]
@@ -31,30 +48,21 @@ class LogIn extends React.Component {
         // TODO: Build credential to sign user in to firebase
         if (result.idToken) {
           const credential = GoogleAuthProvider.credential(result.idToken);          
-          await this.props.firebase.login({ credential })
-
-          // NOTE: THIS CODE WORKS!
-          // const response = auth.signInAndRetrieveDataWithCredential(credential).catch((error) => {
-          //   // Handle Errors here.
-          //   const errorCode = error.code;
-          //   const errorMessage = error.message;
-          //   // The email of the user's account used.
-          //   const email = error.email;
-          //   // The firebase.auth.AuthCredential type that was used.
-          //   const credential = error.credential;
-          //   // ...
-          // });
-
+          await this.props.firebase.login({ credential });
+          // Don't need to set the `requesting` state back to false here, as we redirect as soon as we login.  Perhaps you want to catch errors here.
+          // TODO: Are there any other paths besides the happy path?          
         } else {
           // TODO: Is this even a real edge?
         }
       } else {
         // tslint:disable-next-line:no-console
         console.log("cancelled")
+        this.setState({requesting: false});
       }
     } catch(e) {
       // tslint:disable-next-line:no-console
-      console.log("error", e)
+      console.log("error", e);
+      this.setState({requesting: false});
     }
   };
 }
