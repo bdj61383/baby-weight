@@ -1,6 +1,6 @@
 import { QueryDocumentSnapshot, QuerySnapshot } from '@firebase/firestore-types';
 import React from 'react';
-import { Button, NativeSyntheticEvent, NativeTouchEvent, StyleSheet, Text, TextInput, TimePickerAndroidStatic, View } from 'react-native';
+import { Button, Image, NativeSyntheticEvent, NativeTouchEvent, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { NavigationScreenProp } from 'react-navigation';
 import { withFirebase } from 'react-redux-firebase';
 import { db } from './firebase';
@@ -16,6 +16,16 @@ interface State {
 }
 
 class Home extends React.Component<Props, State> {
+  static navigationOptions = {    
+    drawerIcon: (tintColor:object) => (
+      <Image
+        source={require('./assets/images/home-icon.png')}
+        style={[styles.icon, {tintColor: tintColor.tintColor}]} // TODO: figure out why this is complaining about its type
+      />
+    ),
+    drawerLabel: 'Home',
+  };
+
   readonly state = {first_name: '', last_name: '', due_date: null};
 
   componentDidMount() {
@@ -34,14 +44,18 @@ class Home extends React.Component<Props, State> {
   handleButtonPress = (event: NativeSyntheticEvent<NativeTouchEvent>) =>
     this.props.firebase.logout();
 
+  handleDrawerOpen = (event: NativeSyntheticEvent<NativeTouchEvent>) =>
+    this.props.navigation.openDrawer()
+
   // handleTextSubmit = (text:string):void => this.setState({name: text});
 
   render() {
     return (
       <View>
+        <TouchableOpacity onPress={this.handleDrawerOpen}>
+          <Image source={require('./assets/images/menu-icon.png')} style={styles.menuIcon} />
+        </TouchableOpacity>
         <Text>Welcome to the app {this.state.first_name} {this.state.last_name}</Text>
-        <Button title="Log Out"
-          onPress={this.handleButtonPress} />
         {/* <Text>Your babby is due on {this.state.due_date}</Text> */}
       </View>
       // <View style={styles.root}>
@@ -67,6 +81,15 @@ const styles = StyleSheet.create({
     height: 100,
     justifyContent: 'center',
     width: 100,
+  },
+  icon: {
+    height: 24,
+    width: 24,    
+  },
+  menuIcon: {
+    height: 30,
+    margin: 15,
+    width: 30,    
   },
   otherContainer: {
     // flex: 2,
