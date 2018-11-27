@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, NativeSyntheticEvent, NativeTouchEvent, ScrollView, StyleSheet } from 'react-native';
 import { createAppContainer, createDrawerNavigator, createStackNavigator, createSwitchNavigator, DrawerItems, SafeAreaView } from 'react-navigation';
 import { HomeContainer } from './Home';
-import { Loading } from './Loading';
+import { Loading, LoadingContainer } from './Loading';
 import { LogInContainer } from './LogIn';
 import { ProfileContainer } from './Profile';
 import * as firebase from 'firebase';
@@ -40,7 +40,7 @@ export const Navigator = createAppContainer(createSwitchNavigator(
   {
     App: AppStack,
     Auth: AuthStack,
-    AuthLoading: Loading,
+    AuthLoading: LoadingContainer,
   },
   {
     initialRouteName: 'AuthLoading',
