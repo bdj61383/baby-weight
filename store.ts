@@ -1,9 +1,10 @@
 import 'firebase/auth';
 import 'firebase/database';
 import { AsyncStorage } from "react-native";
-import { reactReduxFirebase } from 'react-redux-firebase';
-import { createStore } from 'redux';
+import { getFirebase, reactReduxFirebase } from 'react-redux-firebase';
+import { applyMiddleware, createStore } from 'redux';
 import { reduxFirestore } from 'redux-firestore';
+import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'remote-redux-devtools';
 import { firebaseApp } from './firebase';
 import { rootReducer } from './reducers';
@@ -29,6 +30,9 @@ const rrfConfig = {
 // Add redux Firebase to compose
 // TODO: Only use `composeWithDevTools` in development.  Otherwise us `compose` from redux.
 const createStoreWithFirebase = composeWithDevTools(
+  applyMiddleware(
+    thunk.withExtraArgument(getFirebase) // Pass getFirebase function as extra argument
+  ),
   reduxFirestore(firebaseApp),
   reactReduxFirebase(firebaseApp, rrfConfig)
 )(createStore)

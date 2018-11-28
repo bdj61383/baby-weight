@@ -1,38 +1,51 @@
 import React from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { NavigationScreenProp } from 'react-navigation';
-import { connect } from 'react-redux';
+import { connect, DispatchProp } from 'react-redux';
 import { loadUserAction } from './actions';
 import { auth } from './firebase';
+import { State, User } from './interfaces';
 
 interface Props {
-  navigation: NavigationScreenProp<{}>
+  dispatch: DispatchProp["dispatch"],
+  navigation: NavigationScreenProp<{}>,
+  onUserLoaded: any,
+  user: User,
 }
 
 export class Loading extends React.PureComponent<Props, {}> {
-  componentDidMount() {
-    auth.onAuthStateChanged(user => {
-      // TODO: find out if the user has a profile and redirect accordingly
-      // Should I dispatch an action here (User_Logged_In) with a payload that is that user's data?
-      
-      if (user) {
-        // Isn't this always going to return false?  I suppose not if we can grab the user data from the localStorage or something like that
-        if (this.props.user.loaded) {
-          console.log('user loaded')
-          this.props.navigation.navigate('Home');
-        } else {       
-          console.log('user NOT loaded')   
-          this.props.dispatch(loadUserAction(user));
-          this.props.navigation.navigate('Profile');          
-        }
+  redirectUser = (user: User) => {
+    if (!user.loaded) {
+      auth.onAuthStateChanged(firebaseUser => {
+        this.handleAuthStateChange(firebaseUser)
+      })
+    } else if (user.height && user.initialWeight && user.dueDate) {
+      this.props.navigation.navigate('Home'); 
+    } else {
+      this.props.navigation.navigate('Profile'); 
+    }
+  };
+
+  handleAuthStateChange = (firebaseUser: firebase.User | null) => {
+    if (firebaseUser) {
+      // Isn't this always going to return false?  I suppose not if we can grab the user data from the localStorage or something like that
+      if (this.props.user.loaded) {
+        this.redirectUser(this.props.user);
       } else {
-        this.props.navigation.navigate('Auth');
+        this.props.dispatch(loadUserAction(firebaseUser));     
       }
+    } else {
+      this.props.navigation.navigate('Auth');
+    }
+  }
 
+  componentDidMount() {
+    this.redirectUser(this.props.user);
+  }
 
-
-      this.props.navigation.navigate(user ? 'App' : 'Auth')
-    })
+  // To handle the update to User state that occurs after loadUserAction is dispatched.
+  componentDidUpdate() {
+    this.redirectUser(this.props.user);
   }
 
   render() {
@@ -45,7 +58,7 @@ export class Loading extends React.PureComponent<Props, {}> {
   }
 }
 
-const mapStateToProps = (state) =>
+const mapStateToProps = (state: State) =>
   ({user: state.user})
 
 export const LoadingContainer = connect(mapStateToProps)(Loading);

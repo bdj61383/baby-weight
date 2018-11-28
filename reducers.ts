@@ -1,19 +1,34 @@
 import { firebaseReducer } from 'react-redux-firebase';
 import { combineReducers } from 'redux';
 import { firestoreReducer } from 'redux-firestore';
+import { LoadUser } from './actions';
+import { User } from './interfaces';
 
-// TODO: define interfaces for users and actions
-const userReducer = (user={loaded: false}, action) => {
+const defaultUserState = {
+  displayName: '',
+  dueDate: '',
+  email: '',
+  height: '',
+  initialWeight: '',
+  loaded: false,
+  photoUrl: '',
+  uid: '',
+}
+
+const userReducer = (user: User = defaultUserState, action: LoadUser): User => {
   switch(action.type) {
     case 'LoadUser':
-      // Check to see if User already exists in state? How would that be possible?
+      const firebaseUser:firebase.User = action.payload;
+      // Use merge here?
       return {
-        displayName: action.payload.displayName,
-        email: action.payload.email,
-        // height: user.height,
+        displayName: firebaseUser.displayName,
+        dueDate: user.dueDate,
+        email: firebaseUser.email,
+        height: user.height,
+        initialWeight: user.initialWeight,
         loaded: true,
-        photoUrl: action.payload.photoURL,
-        uid: action.payload.uid,
+        photoUrl: firebaseUser.photoURL,
+        uid: firebaseUser.uid,
       }
     default: return user;
   }
