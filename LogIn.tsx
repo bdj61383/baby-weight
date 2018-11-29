@@ -26,7 +26,7 @@ class LogIn extends React.Component<Props, State> {
       <View style={styles.container}>
       { this.state.requesting ?
         <React.Fragment>
-          <Text>Loading</Text>
+          <Text>Loading on the Login Screen</Text>
           <ActivityIndicator size="large" />
         </React.Fragment>
       :
@@ -38,6 +38,7 @@ class LogIn extends React.Component<Props, State> {
   }
 
   handleAuth = async () => {
+    const that = this;
     try {
       this.setState({requesting: true})
       const result = await Google.logInAsync({
@@ -47,10 +48,11 @@ class LogIn extends React.Component<Props, State> {
       if (result.type === "success") {
         // TODO: Build credential to sign user in to firebase
         if (result.idToken) {
-          const credential = GoogleAuthProvider.credential(result.idToken);          
+          const credential = GoogleAuthProvider.credential(result.idToken);    
           await this.props.firebase.login({ credential });
+          // that.props.navigation.navigate('Loading')
           // Don't need to set the `requesting` state back to false here, as we redirect as soon as we login.  Perhaps you want to catch errors here.
-          // TODO: Are there any other paths besides the happy path?          
+          // TODO: Are there any other paths besides the happy path?
         } else {
           // TODO: Is this even a real edge?
         }

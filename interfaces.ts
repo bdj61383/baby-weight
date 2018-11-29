@@ -1,5 +1,5 @@
 // TODO: figure out the proper interfaces for firebase and firestore
-export interface State {
+export interface AppState {
   firebase: any,
   firestore: any,
   user: User

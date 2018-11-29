@@ -39,5 +39,6 @@ const createStoreWithFirebase = composeWithDevTools(
 
 // Create store with reducers.  No need for initial state at this time.
 export const store = createStoreWithFirebase(
-  rootReducer
+  rootReducer,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 )

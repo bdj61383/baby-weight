@@ -4,7 +4,7 @@ import { NavigationScreenProp } from 'react-navigation';
 import { connect, DispatchProp } from 'react-redux';
 import { loadUserAction } from './actions';
 import { auth } from './firebase';
-import { State, User } from './interfaces';
+import { AppState, User } from './interfaces';
 
 interface Props {
   dispatch: DispatchProp["dispatch"],
@@ -13,12 +13,10 @@ interface Props {
   user: User,
 }
 
-export class Loading extends React.PureComponent<Props, {}> {
+export class Loading extends React.Component<Props, {}> {
   redirectUser = (user: User) => {
     if (!user.loaded) {
-      auth.onAuthStateChanged(firebaseUser => {
-        this.handleAuthStateChange(firebaseUser)
-      })
+      this.props.navigation.navigate('LogIn');
     } else if (user.height && user.initialWeight && user.dueDate) {
       this.props.navigation.navigate('Home'); 
     } else {
@@ -27,20 +25,24 @@ export class Loading extends React.PureComponent<Props, {}> {
   };
 
   handleAuthStateChange = (firebaseUser: firebase.User | null) => {
+    // Are we Authed?
     if (firebaseUser) {
-      // Isn't this always going to return false?  I suppose not if we can grab the user data from the localStorage or something like that
-      if (this.props.user.loaded) {
-        this.redirectUser(this.props.user);
-      } else {
-        this.props.dispatch(loadUserAction(firebaseUser));     
-      }
+      this.props.dispatch(loadUserAction(firebaseUser));   
     } else {
-      this.props.navigation.navigate('Auth');
+      // We are not authed. Proceed to auth page.
+      this.props.navigation.navigate('LogIn');
     }
   }
 
   componentDidMount() {
-    this.redirectUser(this.props.user);
+    auth.onAuthStateChanged(firebaseUser => {
+      this.handleAuthStateChange(firebaseUser)
+    })
+    // this.redirectUser(this.props.user);
+  }
+
+  componentWillUnmount() {
+    console.log("UNMOUNTED");
   }
 
   // To handle the update to User state that occurs after loadUserAction is dispatched.
@@ -58,8 +60,9 @@ export class Loading extends React.PureComponent<Props, {}> {
   }
 }
 
-const mapStateToProps = (state: State) =>
-  ({user: state.user})
+const mapStateToProps = (state: AppState) => {
+  return {user: state.user}
+}
 
 export const LoadingContainer = connect(mapStateToProps)(Loading);
 

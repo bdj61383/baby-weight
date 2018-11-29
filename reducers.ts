@@ -1,7 +1,7 @@
-import { firebaseReducer } from 'react-redux-firebase';
+import { firebaseReducer, getFirebase } from 'react-redux-firebase';
 import { combineReducers } from 'redux';
 import { firestoreReducer } from 'redux-firestore';
-import { LoadUser } from './actions';
+import { UserAction } from './actions';
 import { User } from './interfaces';
 
 const defaultUserState = {
@@ -15,7 +15,7 @@ const defaultUserState = {
   uid: '',
 }
 
-const userReducer = (user: User = defaultUserState, action: LoadUser): User => {
+const userReducer = (user: User = defaultUserState, action: UserAction): User => {
   switch(action.type) {
     case 'LoadUser':
       const firebaseUser:firebase.User = action.payload;
@@ -30,6 +30,8 @@ const userReducer = (user: User = defaultUserState, action: LoadUser): User => {
         photoUrl: firebaseUser.photoURL,
         uid: firebaseUser.uid,
       }
+    case 'SignOffUser': 
+      return {... defaultUserState}
     default: return user;
   }
 }
