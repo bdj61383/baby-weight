@@ -2,19 +2,19 @@ import React from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { NavigationScreenProp } from 'react-navigation';
 import { connect, DispatchProp } from 'react-redux';
-import { loadUserAction } from './actions';
+import { findOrCreateUserProfileAction } from './actions';
 import { auth } from './firebase';
-import { AppState, User } from './interfaces';
+import { AppState, UserProfile } from './interfaces';
 
 interface Props {
   dispatch: DispatchProp["dispatch"],
   navigation: NavigationScreenProp<{}>,
   onUserLoaded: any,
-  user: User,
+  userProfile: UserProfile,
 }
 
 export class Loading extends React.Component<Props, {}> {
-  redirectUser = (user: User) => {
+  redirectUser = (user: UserProfile) => {
     if (!user.loaded) {
       this.props.navigation.navigate('LogIn');
     } else if (user.height && user.initialWeight && user.dueDate) {
@@ -27,7 +27,7 @@ export class Loading extends React.Component<Props, {}> {
   handleAuthStateChange = (firebaseUser: firebase.User | null) => {
     // Are we Authed?
     if (firebaseUser) {
-      this.props.dispatch(loadUserAction(firebaseUser));   
+      this.props.dispatch(findOrCreateUserProfileAction(firebaseUser));   
     } else {
       // We are not authed. Proceed to auth page.
       this.props.navigation.navigate('LogIn');
@@ -41,13 +41,9 @@ export class Loading extends React.Component<Props, {}> {
     // this.redirectUser(this.props.user);
   }
 
-  componentWillUnmount() {
-    console.log("UNMOUNTED");
-  }
-
   // To handle the update to User state that occurs after loadUserAction is dispatched.
   componentDidUpdate() {
-    this.redirectUser(this.props.user);
+    this.redirectUser(this.props.userProfile);
   }
 
   render() {
@@ -61,7 +57,7 @@ export class Loading extends React.Component<Props, {}> {
 }
 
 const mapStateToProps = (state: AppState) => {
-  return {user: state.user}
+  return {userProfile: state.userProfile}
 }
 
 export const LoadingContainer = connect(mapStateToProps)(Loading);

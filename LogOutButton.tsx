@@ -2,11 +2,11 @@ import React from 'react';
 import { Button, NativeSyntheticEvent, NativeTouchEvent } from 'react-native';
 import { connect, DispatchProp } from 'react-redux';
 import { signOffUserAction, UserAction } from './actions';
-import { AppState, User } from './interfaces';
+import { AppState, UserProfile } from './interfaces';
 
 interface Props {
   dispatch: any, // TODO: What is the type for a thunk action?
-  user: User
+  user: UserProfile
 }
 
 // TODO: style logout button 

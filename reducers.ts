@@ -2,42 +2,33 @@ import { firebaseReducer, getFirebase } from 'react-redux-firebase';
 import { combineReducers } from 'redux';
 import { firestoreReducer } from 'redux-firestore';
 import { UserAction } from './actions';
-import { User } from './interfaces';
+import { UserProfile } from './interfaces';
 
-const defaultUserState = {
-  displayName: '',
-  dueDate: '',
-  email: '',
-  height: '',
-  initialWeight: '',
+const defaultUserProfileState = {
+  displayName: null,
+  dueDate: null,
+  email: null,
+  height: null,
+  initialWeight: null,
   loaded: false,
-  photoUrl: '',
-  uid: '',
+  photoUrl: null,
+  uid: null,
 }
 
-const userReducer = (user: User = defaultUserState, action: UserAction): User => {
+const userProfileReducer = (userProfile: UserProfile = defaultUserProfileState, action: UserAction): UserProfile => {
   switch(action.type) {
-    case 'LoadUser':
-      const firebaseUser:firebase.User = action.payload;
-      // Use merge here?
-      return {
-        displayName: firebaseUser.displayName,
-        dueDate: user.dueDate,
-        email: firebaseUser.email,
-        height: user.height,
-        initialWeight: user.initialWeight,
-        loaded: true,
-        photoUrl: firebaseUser.photoURL,
-        uid: firebaseUser.uid,
-      }
+    case 'LoadUpdatedUser':
+      return { ...action.payload }
+    case 'LoadUserProfile':
+      return { ...action.payload }
     case 'SignOffUser': 
-      return {... defaultUserState}
-    default: return user;
+      return {... defaultUserProfileState}
+    default: return userProfile;
   }
 }
 
 export const rootReducer = combineReducers({
   firebase: firebaseReducer,
   firestore: firestoreReducer,
-  user: userReducer
+  userProfile: userProfileReducer
 });

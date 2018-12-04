@@ -2,16 +2,16 @@
 export interface AppState {
   firebase: any,
   firestore: any,
-  user: User
+  userProfile: UserProfile
 }
 
-export interface User {
+export interface UserProfile {
   displayName: string | null,
   email: string | null,
   loaded: boolean,
   photoUrl: string | null,
   uid: string | null,
-  dueDate: string | null,
-  height: string | null,
-  initialWeight: string | null,
+  dueDate: Date | null,
+  height: number | null,
+  initialWeight: number | null,
 }
